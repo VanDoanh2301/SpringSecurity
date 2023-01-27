@@ -187,12 +187,31 @@ public class UserRoleController {
         }
         return ResponseEntity.ok(resultPage);
     }
-    @Transactional
-    @GetMapping("/deleteId")
+    @GetMapping("/deleteByid")
     @PreAuthorize("hasAuthority('USER_READ')")
-    public  ResponseEntity<?> deleteRole(@RequestParam(value = "roleId") Integer roleId,@RequestParam(value = "name") String name) {
-        roleRepo.deleteRoleId(roleId,name);
-        return ResponseEntity.ok("Delete access");
+    public ResponseEntity<?> deleteRoleId(@RequestParam(value = "roleId") Integer roleId,@RequestParam(value = "name") String name) {
+        List<Role> roles = roleRepo.findId(roleId);
+        Privilege privilege = privilegeRepo.findByName(name);
+        if(roles == null) {
+            return  ResponseEntity.ok("Role null");
+        } else {
+            if(privilege == null) {
+                return ResponseEntity.ok("Privilege null");
+            } else {
+                roles.forEach(role -> {
+                    Collection<Privilege> privileges = role.getPrivileges();
+                    Iterator<Privilege> pri = privileges.iterator();
+                    while(pri.hasNext()) {
+                        Privilege pro =pri.next();
+                        if(pro.getName() == privilege.getName()) {
+                            privileges.remove(pro);
+                        }
+                    }
+                    roleRepo.save(role);
+                });
+                return ResponseEntity.ok("Delete success");
+            }
+        }
     }
 }
 
