@@ -187,13 +187,6 @@ public class UserRoleController {
         }
         return ResponseEntity.ok(resultPage);
     }
-    @Transactional
-    @GetMapping("/deleteId")
-    @PreAuthorize("hasAuthority('USER_READ')")
-    public  ResponseEntity<?> deleteRole(@RequestParam(value = "roleId") Integer roleId,@RequestParam(value = "name") String name) {
-        roleRepo.deleteRoleId(roleId,name);
-        return ResponseEntity.ok("Delete access");
-    }
 }
 
 
