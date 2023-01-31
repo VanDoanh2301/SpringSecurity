@@ -16,8 +16,12 @@ public interface RoleRepostory extends JpaRepository<Role,Integer> {
     List<Role> findId(Integer id);
 
     @Modifying
+
     @Query(value = "select p from privilege_role p where  p.id =?1 ", nativeQuery = true)
     List<Role> findRoleByIdAndPrivileges(Integer id);
+
+    @Query(value = "DELETE p From privilege_role p Left Join role r on p.role_id = r.id  Where p.role_id=?1", nativeQuery = true)
+    public void deleteRoleId();
 
     @Modifying
     @Query(value = "DELETE p FROM privilege_role p INNER JOIN privilege r ON p.privilege_id= r.id WHERE p.role_id=?1 and r.name=?2 ",nativeQuery = true)
